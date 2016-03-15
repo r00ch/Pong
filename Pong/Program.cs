@@ -16,13 +16,63 @@ namespace Example
 			VerticeColour bottomVertice = VerticeColour.Green;
 			VerticeColour rightVertice = VerticeColour.Ivory;
 
-			using (var game = new GameWindow())
+			bool isLeftMouseDown = false;
+			bool isRightMouseDown = false;
+			Vector2 mousePosition = new Vector2();
+
+			Triangle triangle;
+
+			triangle.a = new Vector2(-1.0f, 1.0f);
+			triangle.b = new Vector2(0.0f, -0.73f);
+			triangle.c = new Vector2(1.0f, 1.0f);
+
+			float rotateAngle = 0;
+
+			using (var game = new GameWindow(600, 600))
 			{
-				game.KeyUp += (sender, e) =>
+				game.KeyDown += (sender, e) =>
 				{
 					if (e.Key == Key.Left) leftVertice = ChangeVerticeColour(leftVertice);
 					if (e.Key == Key.Down) bottomVertice = ChangeVerticeColour(bottomVertice);
 					if (e.Key == Key.Right) rightVertice = ChangeVerticeColour(rightVertice);
+				};
+
+				game.MouseMove += (sender, e) =>
+				{
+					Vector2 newMousePosition = new Vector2(Mouse.GetCursorState().X, Mouse.GetCursorState().Y);
+					if (isLeftMouseDown)
+					{
+						triangle.a.X = triangle.a.X - (mousePosition.X - newMousePosition.X) / 180;
+						triangle.a.Y = triangle.a.Y + (mousePosition.Y - newMousePosition.Y) / 180;
+
+						triangle.b.X = triangle.b.X - (mousePosition.X - newMousePosition.X) / 180;
+						triangle.b.Y = triangle.b.Y + (mousePosition.Y - newMousePosition.Y) / 180;
+
+						triangle.c.X = triangle.c.X - (mousePosition.X - newMousePosition.X) / 180;
+						triangle.c.Y = triangle.c.Y + (mousePosition.Y - newMousePosition.Y) / 180;
+
+						mousePosition = newMousePosition;
+					}
+					if (isRightMouseDown)
+					{
+						rotateAngle = rotateAngle+(mousePosition.X - newMousePosition.X)/5;
+						mousePosition = newMousePosition;
+					}
+				};
+
+				game.MouseDown += (sender, e) =>
+				{
+					Console.WriteLine("Mouse button up: " + e.Button + " at: " + e.Position);
+					if (e.Button == MouseButton.Left) isLeftMouseDown = true;
+					if (e.Button == MouseButton.Right) isRightMouseDown = true;
+
+					mousePosition = new Vector2(Mouse.GetCursorState().X, Mouse.GetCursorState().Y);
+				};
+
+				game.MouseUp += (sender, e) =>
+				{
+					if (e.Button == MouseButton.Left) isLeftMouseDown = false;
+					if (e.Button == MouseButton.Right) isRightMouseDown = false;
 				};
 
 				game.Load += (sender, e) =>
@@ -49,18 +99,20 @@ namespace Example
 
 					GL.MatrixMode(MatrixMode.Projection);
 					GL.LoadIdentity();
-					GL.Ortho(-1.0, 1.0, -1.0, 1.0, 0.0, 4.0);
+					GL.Ortho(-2.0, 2.0, -2.0, 2.0, 0.0, 4.0);
+
+					GL.Rotate(rotateAngle, Vector3.UnitZ);
 
 					GL.Begin(PrimitiveType.Triangles);
 
 					GL.Color3(SetVerticeColour(leftVertice));
-					GL.Vertex2(-1.0f, 1.0f);
+					GL.Vertex2(triangle.a);
 					GL.Color3(SetVerticeColour(bottomVertice));
-					GL.Vertex2(0.0f, -1.0f);
+					GL.Vertex2(triangle.b);
 					GL.Color3(SetVerticeColour(rightVertice));
-					GL.Vertex2(1.0f, 1.0f);
-
-					GL.End();
+					GL.Vertex2(triangle.c);
+					
+					GL.End();					
 
 					game.SwapBuffers();
 				};
@@ -104,5 +156,11 @@ namespace Example
 		Blue,
 		Green,
 		Ivory
+	}
+	struct Triangle
+	{
+		public Vector2 a;
+		public Vector2 b;
+		public Vector2 c;
 	}
 }
