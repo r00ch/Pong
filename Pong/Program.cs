@@ -27,6 +27,7 @@ namespace Example
 			triangle.c = new Vector2(1.0f, 1.0f);
 
 			float rotateAngle = 0;
+			Vector3 translation = new Vector3();
 
 			using (var game = new GameWindow(600, 600))
 			{
@@ -42,20 +43,20 @@ namespace Example
 					Vector2 newMousePosition = new Vector2(Mouse.GetCursorState().X, Mouse.GetCursorState().Y);
 					if (isLeftMouseDown)
 					{
-						triangle.a.X = triangle.a.X - (mousePosition.X - newMousePosition.X) / 180;
-						triangle.a.Y = triangle.a.Y + (mousePosition.Y - newMousePosition.Y) / 180;
+						translation.X = translation.X - (mousePosition.X - newMousePosition.X) / 200;
+						translation.Y = translation.Y + (mousePosition.Y - newMousePosition.Y) / 200;
 
-						triangle.b.X = triangle.b.X - (mousePosition.X - newMousePosition.X) / 180;
-						triangle.b.Y = triangle.b.Y + (mousePosition.Y - newMousePosition.Y) / 180;
+						translation.X = translation.X - (mousePosition.X - newMousePosition.X) / 200;
+						translation.Y = translation.Y + (mousePosition.Y - newMousePosition.Y) / 200;
 
-						triangle.c.X = triangle.c.X - (mousePosition.X - newMousePosition.X) / 180;
-						triangle.c.Y = triangle.c.Y + (mousePosition.Y - newMousePosition.Y) / 180;
+						translation.X = translation.X - (mousePosition.X - newMousePosition.X) / 200;
+						translation.Y = translation.Y + (mousePosition.Y - newMousePosition.Y) / 200;
 
 						mousePosition = newMousePosition;
 					}
 					if (isRightMouseDown)
 					{
-						rotateAngle = rotateAngle+(mousePosition.X - newMousePosition.X)/5;
+						rotateAngle = rotateAngle+(mousePosition.X - newMousePosition.X)/2;
 						mousePosition = newMousePosition;
 					}
 				};
@@ -83,6 +84,9 @@ namespace Example
 				game.Resize += (sender, e) =>
 				{
 					GL.Viewport(0, 0, game.Width, game.Height);
+					GL.MatrixMode(MatrixMode.Projection);
+					GL.LoadIdentity();
+					GL.MatrixMode(MatrixMode.Modelview);
 				};
 
 				game.UpdateFrame += (sender, e) =>
@@ -97,10 +101,11 @@ namespace Example
 				{
 					GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-					GL.MatrixMode(MatrixMode.Projection);
+					GL.MatrixMode(MatrixMode.Modelview);
 					GL.LoadIdentity();
 					GL.Ortho(-2.0, 2.0, -2.0, 2.0, 0.0, 4.0);
 
+					GL.Translate(translation);
 					GL.Rotate(rotateAngle, Vector3.UnitZ);
 
 					GL.Begin(PrimitiveType.Triangles);
