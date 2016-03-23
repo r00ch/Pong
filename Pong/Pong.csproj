@@ -56,11 +56,11 @@
     <Compile Include="Dummy.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="IRenderable.cs" />
+    <Compile Include="MoveType.cs" />
     <Compile Include="Paddle.cs" />
     <Compile Include="PaddleType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Pong.cs" />
-    <Compile Include="Excercises.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

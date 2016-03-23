@@ -17,7 +17,7 @@ namespace Pong
 			this.Location = location;
 		}
 		public void GenerateBallMovement()
-		{//27 - 0.3f to jest max Y - losujemy liczbe z przesziału -0.3 do 0.3
+		{//przy kącie 27 - 0.3f to jest max Y - losujemy liczbe z przesziału -0.3 do 0.3
 			if (this.Speed == 0) this.Speed = 10;
 
 			Random rnd = new Random();
@@ -27,7 +27,7 @@ namespace Pong
 		}
 		public void Move()
 		{
-			this.Location += MovementDirection * Speed; // tymczasowo do testów :P
+			this.Location += MovementDirection * Speed;
 		}
 		public void CalculateCollision(uint gameWindowWidth, uint gameWindowHeight)
 		{
@@ -41,14 +41,21 @@ namespace Pong
 				this.Location = new Vector3(0, 0, 0);
 			}
 		}
-		public void CalculateCollision(GameObject go)
+		public void CalculateCollision(Paddle paddle)
 		{
-			if (this.Location.Y - this.Dimensions.Y / 2 <= go.Location.Y + go.Dimensions.Y / 2 &&
-				this.Location.Y + this.Dimensions.Y / 2 >= go.Location.Y - go.Dimensions.Y / 2 )
+			if (this.Location.Y - this.Dimensions.Y / 2 <= paddle.Location.Y + paddle.Dimensions.Y / 2 &&
+				this.Location.Y + this.Dimensions.Y / 2 >= paddle.Location.Y - paddle.Dimensions.Y / 2 )
 			{
-				if (this.Location.X - this.Dimensions.X / 2 <= go.Location.X + go.Dimensions.X / 2 &&
-				    this.Location.X + this.Dimensions.X / 2 >= go.Location.X - go.Dimensions.X / 2 )
+				if (this.Location.X - this.Dimensions.X / 2 <= paddle.Location.X + paddle.Dimensions.X / 2 &&
+					this.Location.X + this.Dimensions.X / 2 >= paddle.Location.X - paddle.Dimensions.X / 2)
+				{
 					this.MovementDirection *= new Vector3(-1, 1, 1);
+					if (paddle.Type == PaddleType.Player && paddle.Moving != MoveType.None)
+					{
+						if (paddle.Moving == MoveType.Up) this.MovementDirection = new Vector3(this.MovementDirection.X, this.MovementDirection.Y + 0.2f,0);
+						else this.MovementDirection = new Vector3(this.MovementDirection.X, this.MovementDirection.Y - 0.2f, 0);
+					}
+				}	
 			}
 		}
 	}

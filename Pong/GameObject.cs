@@ -9,6 +9,7 @@ namespace Pong
 	{
 		public Vector2 Dimensions { get; set; }
 		public Vector3 Location { get; set; }
+		public MoveType Moving { get; set; }
 
 		public void Move(Vector3 movementVector)
 		{

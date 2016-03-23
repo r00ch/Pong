@@ -44,21 +44,40 @@ namespace Pong
 		}
 		protected override void OnKeyDown(KeyboardKeyEventArgs e)
 		{
-			if (e.Key == Key.Up) pressedUp = true;
-			if (e.Key == Key.Down) pressedDown = true;
+			if (e.Key == Key.Up)
+			{
+				pressedUp = true;
+				playerPaddle.Moving = MoveType.Up;
+			}
+			if (e.Key == Key.Down)
+			{
+				pressedDown = true;
+				playerPaddle.Moving = MoveType.Down;
+			}
+			if (pressedUp && pressedDown) playerPaddle.Moving = MoveType.None;
 		}
 		protected override void OnKeyUp(KeyboardKeyEventArgs e)
 		{
-			if (e.Key == Key.Up) pressedUp = false;
-			if (e.Key == Key.Down) pressedDown = false;
+			if (e.Key == Key.Up)pressedUp = false;
+			if (e.Key == Key.Down)pressedDown = false;
 			if (e.Key == Key.Space) ball.GenerateBallMovement();
+			if (!pressedDown && !pressedUp) playerPaddle.Moving = MoveType.None;
 		}
 		private void MovePlayerPaddle()
 		{
-			if (pressedUp && playerPaddle.Location.Y < this.Height/2 - playerPaddle.Dimensions.Y/2)
+			if (pressedUp && playerPaddle.Location.Y < this.Height / 2 - playerPaddle.Dimensions.Y / 2)
 				playerPaddle.Move(new Vector3(0, 5, 0));
-			else if (pressedDown && playerPaddle.Location.Y > -this.Height / 2 + playerPaddle.Dimensions.Y / 2)
+			if (pressedDown && playerPaddle.Location.Y > -this.Height / 2 + playerPaddle.Dimensions.Y / 2)
 				playerPaddle.Move(new Vector3(0, -5, 0));
+		}
+		private void MoveCpuPaddle()
+		{
+			if (cpuPaddle.Location.Y < ball.Location.Y &&
+				cpuPaddle.Location.Y < this.Height / 2 - cpuPaddle.Dimensions.Y / 2)
+				cpuPaddle.Move(new Vector3(0, 3, 0));
+			else if (cpuPaddle.Location.Y > ball.Location.Y &&
+				cpuPaddle.Location.Y > -this.Height / 2 + cpuPaddle.Dimensions.Y / 2)
+				cpuPaddle.Move(new Vector3(0, -3, 0));
 		}
 		protected override void OnRenderFrame(FrameEventArgs e)
 		{
@@ -67,7 +86,9 @@ namespace Pong
 				SetWindowSize();
 				gotResized = false;
 			}
+
 			MovePlayerPaddle();
+			MoveCpuPaddle();
 
 			ball.CalculateCollision(gameWindowWidth, gameWindowHeight);
 			ball.CalculateCollision(playerPaddle);
