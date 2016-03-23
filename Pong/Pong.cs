@@ -18,6 +18,7 @@ namespace Pong
 
 		Paddle playerPaddle = new Paddle(20, 100, PaddleType.Player);
 		Paddle cpuPaddle = new Paddle(20, 100, PaddleType.CPU);
+		Ball ball = new Ball(20, 20, new Vector3());
 
 		bool pressedUp = false;
 		bool pressedDown = false;
@@ -50,13 +51,14 @@ namespace Pong
 		{
 			if (e.Key == Key.Up) pressedUp = false;
 			if (e.Key == Key.Down) pressedDown = false;
+			if (e.Key == Key.Space) ball.GenerateBallMovement();
 		}
 		private void MovePlayerPaddle()
 		{
 			if (pressedUp && playerPaddle.Location.Y < this.Height/2 - playerPaddle.Dimensions.Y/2)
-				playerPaddle.Location = new Vector3(-480, playerPaddle.Location.Y + 5, 0);
+				playerPaddle.Move(new Vector3(0, 5, 0));
 			else if (pressedDown && playerPaddle.Location.Y > -this.Height / 2 + playerPaddle.Dimensions.Y / 2)
-				playerPaddle.Location = new Vector3(-480, playerPaddle.Location.Y - 5, 0);
+				playerPaddle.Move(new Vector3(0, -5, 0));
 		}
 		protected override void OnRenderFrame(FrameEventArgs e)
 		{
@@ -67,11 +69,16 @@ namespace Pong
 			}
 			MovePlayerPaddle();
 
+			ball.CalculateCollision(gameWindowWidth, gameWindowHeight);
+			ball.CalculateCollision(playerPaddle);
+			ball.CalculateCollision(cpuPaddle);
+			ball.Move();
+			
 			GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-			Dummy.Create();
 			playerPaddle.Render();
 			cpuPaddle.Render();
+			ball.Render();
 
 			this.SwapBuffers();
 		}

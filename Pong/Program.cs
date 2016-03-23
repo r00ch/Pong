@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 
 namespace Pong
 {
@@ -11,7 +12,7 @@ namespace Pong
 		static void Main()
 		{
 			var game = new Pong();
-			game.Run(60);
+			game.Run(10);
 		}
 	}
 }
