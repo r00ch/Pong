@@ -11,6 +11,11 @@ namespace Pong
 	{
 		static void Main()
 		{
+			Console.WriteLine("Wilkomen!");
+			Console.WriteLine("Aby rozpocząć klepnij SPACE");
+			Console.WriteLine("Żeby ruszyć paletką wciśnij klawisze UP i DOWN");
+			Console.WriteLine("WAŻNE: Paletka w ruchu wpływa na kąt odbicia piłki!");
+
 			var game = new Pong();
 			game.Run(10);
 		}
